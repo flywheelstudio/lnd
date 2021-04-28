@@ -801,9 +801,6 @@ message SignPsbtRequest {
 message SignPsbtResponse {
     // The partially signed transaction in PSBT format.
     bytes signed_psbt = 1;
-
-    // The partially signed transaction in the raw wire format.
-    bytes raw_signed_tx = 2;
 }
 
 message FinalizePsbtRequest {

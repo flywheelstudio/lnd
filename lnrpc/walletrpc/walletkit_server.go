@@ -1208,29 +1208,15 @@ func (w *WalletKit) SignPsbt(_ context.Context,
 		return nil, fmt.Errorf("error finalizing PSBT: %v", err)
 	}
 
-	var (
-		signedPsbtBytes bytes.Buffer
-		signedTxBytes   bytes.Buffer
-	)
+	var signedPsbtBytes bytes.Buffer
 
 	// Serialize the signed PSBT in both the packet and wire format.
 	err = packet.Serialize(&signedPsbtBytes)
 	if err != nil {
 		return nil, fmt.Errorf("error serializing PSBT: %v", err)
 	}
-	signedTx, err := psbt.Extract(packet)
-	if err != nil {
-		return nil, fmt.Errorf("unable to extract signed TX: %v", err)
-	}
-	err = signedTx.Serialize(&signedTxBytes)
-	if err != nil {
-		return nil, fmt.Errorf("error serializing signed TX: %v", err)
-	}
 
-	return &SignPsbtResponse{
-		SignedPsbt:  signedPsbtBytes.Bytes(),
-		RawSignedTx: signedTxBytes.Bytes(),
-	}, nil
+	return &SignPsbtResponse{SignedPsbt: signedPsbtBytes.Bytes()}, nil
 }
 
 // FinalizePsbt expects a partial transaction with all inputs and outputs fully
