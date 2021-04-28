@@ -1336,6 +1336,21 @@
         }
       }
     },
+    "walletrpcSignPsbtResponse": {
+      "type": "object",
+      "properties": {
+        "signed_psbt": {
+          "type": "string",
+          "format": "byte",
+          "description": "The partially signed transaction in PSBT format."
+        },
+        "raw_signed_tx": {
+          "type": "string",
+          "format": "byte",
+          "description": "The partially signed transaction in the raw wire format."
+        }
+      }
+    },
     "walletrpcTransaction": {
       "type": "object",
       "properties": {
