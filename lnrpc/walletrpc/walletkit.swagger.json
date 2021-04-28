@@ -359,6 +359,38 @@
         ]
       }
     },
+    "/v2/wallet/psbt/sign": {
+      "post": {
+        "operationId": "SignPsbt",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/walletrpcSignPsbtResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/walletrpcSignPsbtRequest"
+            }
+          }
+        ],
+        "tags": [
+          "WalletKit"
+        ]
+      }
+    },
     "/v2/wallet/send": {
       "post": {
         "summary": "SendOutputs is similar to the existing sendmany call in Bitcoind, and\nallows the caller to create a transaction that sends to several outputs at\nonce. This is ideal when wanting to batch create a set of transactions.",
@@ -1336,6 +1368,20 @@
         }
       }
     },
+    "walletrpcSignPsbtRequest": {
+      "type": "object",
+      "properties": {
+        "psbt": {
+          "type": "string",
+          "format": "byte",
+          "title": "A PSBT that should be signed. The PSBT must contain all\nrequired inputs and outputs"
+        },
+        "account": {
+          "type": "string",
+          "description": "The name of the account to sign the PSBT with. If empty, the default\nwallet account is used."
+        }
+      }
+    },
     "walletrpcSignPsbtResponse": {
       "type": "object",
       "properties": {
@@ -1343,11 +1389,6 @@
           "type": "string",
           "format": "byte",
           "description": "The partially signed transaction in PSBT format."
-        },
-        "raw_signed_tx": {
-          "type": "string",
-          "format": "byte",
-          "description": "The partially signed transaction in the raw wire format."
         }
       }
     },
