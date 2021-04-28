@@ -200,6 +200,8 @@ service WalletKit {
     */
     rpc FundPsbt (FundPsbtRequest) returns (FundPsbtResponse);
 
+    rpc SignPsbt (SignPsbtRequest) returns (SignPsbtResponse);
+
     /*
     FinalizePsbt expects a partial transaction with all inputs and outputs fully
     declared and tries to sign all inputs that belong to the wallet. Lnd must be
@@ -781,6 +783,27 @@ message UtxoLease {
     The absolute expiration of the output lease represented as a unix timestamp.
     */
     uint64 expiration = 3;
+}
+
+message SignPsbtRequest {
+    /*
+    A PSBT that should be signed. The PSBT must contain all
+    required inputs and outputs
+    */
+    bytes psbt = 1;
+
+    /*
+    The name of the account to sign the PSBT with. If empty, the default
+    wallet account is used.
+    */
+    string account = 5;
+}
+message SignPsbtResponse {
+    // The partially signed transaction in PSBT format.
+    bytes signed_psbt = 1;
+
+    // The partially signed transaction in the raw wire format.
+    bytes raw_signed_tx = 2;
 }
 
 message FinalizePsbtRequest {

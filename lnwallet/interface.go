@@ -351,6 +351,8 @@ type WalletController interface {
 	FundPsbt(packet *psbt.Packet, feeRate chainfee.SatPerKWeight,
 		account string) (int32, error)
 
+	SignPsbt(packet *psbt.Packet, account string) error
+
 	// FinalizePsbt expects a partial transaction with all inputs and
 	// outputs fully declared and tries to sign all inputs that belong to
 	// the specified account. Lnd must be the last signer of the

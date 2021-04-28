@@ -174,6 +174,11 @@ func (w *WalletController) FundPsbt(_ *psbt.Packet,
 	return 0, nil
 }
 
+// SignPsbt currently does nothing.
+func (w *WalletController) SignPsbt(_ *psbt.Packet, _ string) error {
+	return nil
+}
+
 // FinalizePsbt currently does nothing.
 func (w *WalletController) FinalizePsbt(_ *psbt.Packet, _ string) error {
 	return nil

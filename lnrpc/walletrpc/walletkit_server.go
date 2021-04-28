@@ -127,6 +127,10 @@ var (
 			Entity: "onchain",
 			Action: "write",
 		}},
+		"/walletroc.WalletKit/SignPsbt": {{
+			Entity: "onchain",
+			Action: "write"
+		}},
 		"/walletrpc.WalletKit/FinalizePsbt": {{
 			Entity: "onchain",
 			Action: "write",
@@ -1175,6 +1179,58 @@ func marshallLeases(locks []*wtxmgr.LockedOutput) []*UtxoLease {
 	}
 
 	return rpcLocks
+}
+
+func (w *WalletKit) SignPsbt(_ context.Context,
+	req *SignPsbtRequest) (*SignPsbtResponse, error) {
+
+	// We'll assume the PSBT was funded by the default account unless
+	// otherwise specified.
+	account := lnwallet.DefaultAccountName
+	if req.Account != "" {
+		account = req.Account
+	}
+
+	// Parse the PSBT. No additional checks are required at this
+	// level as the wallet will perform all of them.
+	packet, err := psbt.NewFromRawBytes(
+		bytes.NewReader(req.SignedPsbt), false,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing PSBT: %v", err)
+	}
+
+	// Let the wallet do the heavy lifting. This will sign all inputs that
+	// we have the UTXO for. If some inputs can't be signed and don't have
+	// witness data attached, this will fail.
+	err = w.cfg.Wallet.SignPsbt(packet, account)
+	if err != nil {
+		return nil, fmt.Errorf("error finalizing PSBT: %v", err)
+	}
+
+	var (
+		signedPsbtBytes bytes.Buffer
+		signedTxBytes   bytes.Buffer
+	)
+
+	// Serialize the signed PSBT in both the packet and wire format.
+	err = packet.Serialize(&signedPsbtBytes)
+	if err != nil {
+		return nil, fmt.Errorf("error serializing PSBT: %v", err)
+	}
+	signedTx, err := psbt.Extract(packet)
+	if err != nil {
+		return nil, fmt.Errorf("unable to extract signed TX: %v", err)
+	}
+	err = signedTx.Serialize(&signedTxBytes)
+	if err != nil {
+		return nil, fmt.Errorf("error serializing signed TX: %v", err)
+	}
+
+	return &SignedPsbtResponse{
+		SignedPsbt: signedPsbtBytes.Bytes(),
+		RawSignedTx: signedTxBytes.Bytes(),
+	}, nil
 }
 
 // FinalizePsbt expects a partial transaction with all inputs and outputs fully

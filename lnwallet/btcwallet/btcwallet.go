@@ -957,6 +957,37 @@ func (b *BtcWallet) FundPsbt(packet *psbt.Packet,
 	return b.wallet.FundPsbt(packet, keyScope, accountNum, feeSatPerKB)
 }
 
+func (b *BtcWallet) SignPsbt(packet *psbt.Packet, accountName string) error {
+	var (
+		keyScope   *waddrmgr.KeyScope
+		accountNum uint32
+	)
+
+	switch accountName {
+	// If the default/imported account name was specified, we'll provide a
+	// nil key scope to FundPsbt, allowing it to sign inputs from both key
+	// scopes (NP2WKH, P2WKH).
+	case lnwallet.DefaultAccountName:
+		accountNum = defaultAccount
+
+	case waddrmgr.ImportedAddrAccountName:
+		accountNum = importedAccount
+
+	// Otherwise, map the account name to its key scope and internal account
+	// number to determine if the inputs belonging to this account should be
+	// signed.
+	default:
+		scope, account, err := b.wallet.LookupAccount(accountName)
+		if err != nil {
+			return err
+		}
+		keyScope = &scope
+		accountNum = account
+	}
+
+	return b.wallet.SignPsbt(keyScope, accountNum, packet)
+}
+
 // FinalizePsbt expects a partial transaction with all inputs and outputs fully
 // declared and tries to sign all inputs that belong to the specified account.
 // Lnd must be the last signer of the transaction. That means, if there are any
