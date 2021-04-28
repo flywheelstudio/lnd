@@ -1194,7 +1194,7 @@ func (w *WalletKit) SignPsbt(_ context.Context,
 	// Parse the PSBT. No additional checks are required at this
 	// level as the wallet will perform all of them.
 	packet, err := psbt.NewFromRawBytes(
-		bytes.NewReader(req.SignedPsbt), false,
+		bytes.NewReader(req.Psbt), false,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing PSBT: %v", err)
