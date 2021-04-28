@@ -127,7 +127,7 @@ var (
 			Entity: "onchain",
 			Action: "write",
 		}},
-		"/walletroc.WalletKit/SignPsbt": {{
+		"/walletrpc.WalletKit/SignPsbt": {{
 			Entity: "onchain",
 			Action: "write",
 		}},
