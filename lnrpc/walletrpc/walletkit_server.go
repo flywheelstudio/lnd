@@ -1227,7 +1227,7 @@ func (w *WalletKit) SignPsbt(_ context.Context,
 		return nil, fmt.Errorf("error serializing signed TX: %v", err)
 	}
 
-	return &SignedPsbtResponse{
+	return &SignPsbtResponse{
 		SignedPsbt:  signedPsbtBytes.Bytes(),
 		RawSignedTx: signedTxBytes.Bytes(),
 	}, nil
