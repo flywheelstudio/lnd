@@ -129,7 +129,7 @@ var (
 		}},
 		"/walletroc.WalletKit/SignPsbt": {{
 			Entity: "onchain",
-			Action: "write"
+			Action: "write",
 		}},
 		"/walletrpc.WalletKit/FinalizePsbt": {{
 			Entity: "onchain",
@@ -1228,7 +1228,7 @@ func (w *WalletKit) SignPsbt(_ context.Context,
 	}
 
 	return &SignedPsbtResponse{
-		SignedPsbt: signedPsbtBytes.Bytes(),
+		SignedPsbt:  signedPsbtBytes.Bytes(),
 		RawSignedTx: signedTxBytes.Bytes(),
 	}, nil
 }
